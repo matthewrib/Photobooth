@@ -35,18 +35,20 @@ def center_crop_to_aspect(img, target_w, target_h):
 captured_frames = []
 
 for i in range(num_images):
-    if i > 0:
-        print(f"Waiting {cooldown_seconds} seconds before photo {i + 1}...")
-        time.sleep(cooldown_seconds)
-
     ret, frame = cam.read()
     if not ret:
         print(f"Failed to capture image {i + 1}")
         continue
 
+    while cooldown_seconds > 0:
+        print(f"{cooldown_seconds} seconds before photo {i + 1}...")
+        time.sleep(1)
+        cooldown_seconds -= 1
+
     captured_frames.append(frame.copy())
     imshow("Captured", frame)
     imwrite(f"captured_image_{i + 1}.jpg", frame)
+    cooldown_seconds = 2
     waitKey(300)
 
 if not captured_frames:
